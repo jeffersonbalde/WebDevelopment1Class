@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe Game</title>
+    <style>
+        /* Add your CSS styles here if needed */
+        .cell {
+            width: 100px;
+            height: 100px;
+            /* text-align: center; */
+            font-size: 24px;
+            border: 1px solid #000;
+            /* display: inline-block;    */
+            cursor: pointer;
+        }
+
+        #board {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        /* .flip {
+            transform: rotateY(180deg);
+            transition: transform 0.3s;
+        } */
+
+        .winning-cell {
+            background-color: lightgreen;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tic-Tac-Toe</h1>
+    <div id="result"></div>
+    <button id="resetBoardButton">Reset Board</button>
+    <button id="resetScoreButton" onclick="resetScore()">Reset Score</button>
+    <div id="score">Score: X <span id="scoreX">0</span> - O <span id="scoreO">0</span></div>
+    <div id="board">
+        <div class="cell" onclick="makeMove(0, 0)"></div>
+        <div class="cell" onclick="makeMove(0, 1)"></div>
+        <div class="cell" onclick="makeMove(0, 2)"></div>
+        <div class="cell" onclick="makeMove(1, 0)"></div>
+        <div class="cell" onclick="makeMove(1, 1)"></div>
+        <div class="cell" onclick="makeMove(1, 2)"></div>
+        <div class="cell" onclick="makeMove(2, 0)"></div>
+        <div class="cell" onclick="makeMove(2, 1)"></div>
+        <div class="cell" onclick="makeMove(2, 2)"></div>
+    </div>
+    <script>
+        let currentPlayer = 'X';
+let board = ['', '', '', '', '', '', '', '', ''];
+let scoreX = 0;
+let scoreO = 0;
+
+function makeMove(row, col) {
+    const index = 3 * row + col;
+    if (board[index] === '' && !checkWinner()) {
+        board[index] = currentPlayer;
+        document.getElementsByClassName('cell')[index].textContent = currentPlayer;
+        document.getElementsByClassName('cell')[index].classList.add('flip');
+        if (checkWinner()) {
+            document.getElementById('result').textContent = `Player ${currentPlayer} wins!`;
+            if (currentPlayer === 'X') {
+                scoreX++;
+                document.getElementById('scoreX').textContent = scoreX;
+            } else {
+                scoreO++;
+                document.getElementById('scoreO').textContent = scoreO;
+            }
+        } else if (!board.includes('')) {
+            document.getElementById('result').textContent = "It's a draw!";
+        } else {
+            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+        }
+    }
+}
+
+function checkWinner() {
+    // Define winning combinations
+    const winPatterns = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+        [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+        [0, 4, 8], [2, 4, 6]             // Diagonals
+    ];
+    for (const pattern of winPatterns) {
+        const [a, b, c] = pattern;
+        if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+            // Highlight the winning cells
+            document.getElementsByClassName('cell')[a].classList.add('winning-cell');
+            document.getElementsByClassName('cell')[b].classList.add('winning-cell');
+            document.getElementsByClassName('cell')[c].classList.add('winning-cell');
+            document.getElementById('board').style.pointerEvents = 'none'; // Disable further moves
+
+            return true; // Return true if a player has won
+        }
+    }
+
+    return false; // Return false if there's no winner yet
+}
+
+function resetBoard() {
+    board = ['', '', '', '', '', '', '', '', ''];
+    document.getElementById('result').textContent = '';
+    const cells = document.getElementsByClassName('cell');
+    for (let cell of cells) {
+        cell.textContent = '';
+        cell.classList.remove('flip');
+        cell.classList.remove('winning-cell');
+    }
+    document.getElementById('board').style.pointerEvents = 'auto';
+    currentPlayer = 'X';
+}
+
+function resetScore() {
+    scoreX = 0;
+    scoreO = 0;
+    document.getElementById('scoreX').textContent = '0';
+    document.getElementById('scoreO').textContent = '0';
+}
+
+const resetBoardButton = document.getElementById('resetBoardButton');
+resetBoardButton.addEventListener('click', resetBoard);
+
+    </script>
+</body>
+</html>
